@@ -1,4 +1,4 @@
-package com.example.itquizletspringbootapi.repository;
+package com.example.itquizletspringbootapi.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,5 +24,11 @@ public class QuizEntity {
     private String title;
 
     private String description;
+
+    @ManyToOne
+    private UserEntity owner;
+
+    @OneToMany
+    private List<QuestionEntity> questions;
 
 }

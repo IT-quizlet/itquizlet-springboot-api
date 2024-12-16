@@ -1,4 +1,4 @@
-package com.example.itquizletspringbootapi.repository;
+package com.example.itquizletspringbootapi.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

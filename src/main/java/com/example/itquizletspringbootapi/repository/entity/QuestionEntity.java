@@ -1,4 +1,4 @@
-package com.example.itquizletspringbootapi.repository;
+package com.example.itquizletspringbootapi.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "answers")
+@Table(name = "questions")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerEntity {
+public class QuestionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

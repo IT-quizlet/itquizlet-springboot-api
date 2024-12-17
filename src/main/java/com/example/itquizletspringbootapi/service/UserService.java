@@ -1,8 +1,8 @@
 package com.example.itquizletspringbootapi.service;
 
-import com.example.itquizletspringbootapi.dto.UserRegisterDto;
-import com.example.itquizletspringbootapi.dto.UserDto;
-import com.example.itquizletspringbootapi.dto.UserUpdateDto;
+import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
+import com.example.itquizletspringbootapi.dto.user.UserDto;
+import com.example.itquizletspringbootapi.dto.user.UserUpdateDto;
 
 import java.util.UUID;
 

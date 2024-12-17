@@ -22,7 +22,7 @@ public class QuestionAnswerEntity {
     private String answerText;
 
     @Column(nullable = false)
-    private boolean isCorrect;
+    private Boolean isCorrect;
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)

@@ -12,7 +12,12 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {
+            @Index(name = "idx_user_username", columnList = "username"),
+            @Index(name = "idx_user_email", columnList = "email")
+        }
+)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
@@ -24,7 +29,7 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String username;
 
-    @Column(nullable = false, unique = true, length = 320)
+    @Column(nullable = false, unique = true, updatable = false, length = 320)
     private String email;
 
     @Column(nullable = false)

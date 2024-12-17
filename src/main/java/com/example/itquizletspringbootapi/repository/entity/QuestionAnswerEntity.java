@@ -9,13 +9,23 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "answers")
+@Table(name = "question_answers")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerEntity {
+public class QuestionAnswerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(nullable = false)
+    private String answerText;
+
+    @Column(nullable = false)
+    private boolean isCorrect;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private QuestionEntity question;
 
 }

@@ -21,9 +21,16 @@ public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final QuizMapper quizMapper;
 
+    public QuizServiceImpl(QuizRepository quizRepository, QuizMapper quizMapper) {
+        this.quizRepository = quizRepository;
+        this.quizMapper = quizMapper;
+    }
+
     @Override
-    public QuizDto createQuiz(QuizCreateDto quiz) {
-        return null;
+    public QuizDTO createQuiz(QuizDTO quizDTO) {
+        QuizEntity quizEntity = quizMapper.toEntity(quizDTO);
+        QuizEntity savedQuiz = quizRepository.save(quizEntity);
+        return quizMapper.toDTO(savedQuiz);
     }
 
     @Override
@@ -45,5 +52,7 @@ public class QuizServiceImpl implements QuizService {
     public void deleteQuiz(UUID quizId) {
 
     }
+
+
 
 }

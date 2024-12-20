@@ -11,6 +11,7 @@ public interface QuizService {
 
     QuizDto createQuiz(QuizCreateDto quiz);
     QuizDto getQuizById(UUID quizId);
+    List<QuizDto> getAllQuizzes();
     List<QuizDto> getQuizzesByOwner(UUID ownerId);
     QuizDto updateQuiz(UUID quizId, QuizUpdateDto updatedQuiz);
     void deleteQuiz(UUID quizId);

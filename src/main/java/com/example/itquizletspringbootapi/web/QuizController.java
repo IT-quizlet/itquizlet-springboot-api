@@ -29,21 +29,27 @@ public class QuizController {
         return ResponseEntity.ok(createdQuiz);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<QuizDto> getQuizByID(@PathVariable UUID id) {
         QuizDto quiz = quizService.getQuizById(id);
         return ResponseEntity.ok(quiz);
     }
-
     @GetMapping("/owner/{ownerId}")
     public ResponseEntity<List<QuizDto>> getQuizByOwner(@PathVariable UUID ownerId) {
         List<QuizDto> quizzes = quizService.getQuizzesByOwner(ownerId);
         return ResponseEntity.ok(quizzes);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<QuizDto>> getAllQuizzes() {
+        List<QuizDto> allQuizzes = quizService.getAllQuizzes();
+        return ResponseEntity.ok(allQuizzes);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<QuizDto> updateQuizById(@PathVariable UUID id, @RequestBody QuizUpdateDto quizUpdateDto) {
-        QuizDto updatedQuiz = quizService.updateQuiz(id, quizUpdateDto);
+    public ResponseEntity<QuizDto> updateQuizById(@PathVariable UUID id, @RequestBody QuizUpdateDto quizUpdateDTO) {
+        QuizDto updatedQuiz = quizService.updateQuiz(id, quizUpdateDTO);
         return ResponseEntity.ok(updatedQuiz);
     }
 

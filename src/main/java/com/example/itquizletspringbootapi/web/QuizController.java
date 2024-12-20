@@ -1,14 +1,18 @@
 package com.example.itquizletspringbootapi.web;
 
+import com.example.itquizletspringbootapi.dto.quiz.QuizCreateDto;
+import com.example.itquizletspringbootapi.dto.quiz.QuizUpdateDto;
 import com.example.itquizletspringbootapi.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.dto.QuizDTO;
-import com.example.service.QuizService;
+import com.example.itquizletspringbootapi.dto.quiz.QuizDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @Validated
 @RestController
@@ -19,13 +23,33 @@ public class QuizController {
 
     private final QuizService quizService;
 
-    public QuizController(QuizService quizService) {
-        this.quizService = quizService;
+    @PostMapping
+    public ResponseEntity<QuizDto> createQuiz(@RequestBody QuizCreateDto quizDTO) {
+        QuizDto createdQuiz = quizService.createQuiz(quizDTO);
+        return ResponseEntity.ok(createdQuiz);
     }
 
-    @PostMapping
-    public ResponseEntity<QuizDTO> createQuiz(@RequestBody QuizDTO quizDTO) {
-        QuizDTO createdQuiz = quizService.createQuiz(quizDTO);
-        return ResponseEntity.ok(createdQuiz);
+    @GetMapping("/{id}")
+    public ResponseEntity<QuizDto> getQuizByID(@PathVariable UUID id) {
+        QuizDto quiz = quizService.getQuizById(id);
+        return ResponseEntity.ok(quiz);
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<QuizDto>> getQuizByOwner(@PathVariable UUID ownerId) {
+        List<QuizDto> quizzes = quizService.getQuizzesByOwner(ownerId);
+        return ResponseEntity.ok(quizzes);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<QuizDto> updateQuizById(@PathVariable UUID id, @RequestBody QuizUpdateDto quizUpdateDto) {
+        QuizDto updatedQuiz = quizService.updateQuiz(id, quizUpdateDto);
+        return ResponseEntity.ok(updatedQuiz);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuizById(@PathVariable UUID id) {
+        quizService.deleteQuiz(id);
+        return ResponseEntity.noContent().build();
     }
 }

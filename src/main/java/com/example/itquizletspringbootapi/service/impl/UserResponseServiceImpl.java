@@ -37,7 +37,7 @@ public class UserResponseServiceImpl implements UserResponseService {
 
     @Override
     public List<UserResponseDto> getResponsesByUsername(String username) {
-        List<UserResponseEntity> userResponses = userResponseRepository.findUserResponsesByUsername(username);
+        List<UserResponseEntity> userResponses = userResponseRepository.findUserResponsesByUser_Username(username);
         log.info("Retrieved {} user responses from user: {}", userResponses.size(), username);
         return userResponses.stream()
                 .map(userResponseMapper::toDto)

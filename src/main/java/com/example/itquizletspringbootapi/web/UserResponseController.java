@@ -1,7 +1,5 @@
 package com.example.itquizletspringbootapi.web;
 
-import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
-import com.example.itquizletspringbootapi.dto.question.QuestionDto;
 import com.example.itquizletspringbootapi.dto.userresponse.UserResponseCreateDto;
 import com.example.itquizletspringbootapi.dto.userresponse.UserResponseDto;
 import com.example.itquizletspringbootapi.service.UserResponseService;

@@ -13,6 +13,4 @@ public interface UserResponseMapper {
     UserResponseEntity toEntity(UserResponseCreateDto dto);
 
     UserResponseDto toDto(UserResponseEntity entity);
-
-    UserResponseEntity updateEntityFromDto(UserResponseDto dto);
 }

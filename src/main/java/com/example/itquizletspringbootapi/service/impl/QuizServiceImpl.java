@@ -43,21 +43,25 @@ public class QuizServiceImpl implements QuizService {
     public List<QuizDto> getAllQuizzes(){
         List<QuizEntity> quizzes = quizRepository.findAll();
         log.info("Retrieved {} quizzes", quizzes.size());
-        return quizzes.stream().map(quizMapper::toDTO).collect(Collectors.toList());
+        return quizzes.stream()
+                .map(quizMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<QuizDto> getQuizzesByOwner(UUID ownerId) {
         List<QuizEntity> quizzes = quizRepository.findByOwnerId(ownerId);
         log.info("Retrieved {} quizzes for owner ID: {}", quizzes.size(), ownerId);
-        return quizzes.stream().map(quizMapper::toDTO).collect(Collectors.toList());
+        return quizzes.stream()
+                .map(quizMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public QuizDto updateQuiz(UUID quizId, QuizUpdateDto updatedQuiz) {
+    public QuizDto updateQuiz(UUID quizId, QuizUpdateDto updatedQuizDto) {
         QuizEntity quizEntity = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
-        quizMapper.updateEntityFromDto(updatedQuiz, quizEntity);
+        quizMapper.updateEntityFromDto(updatedQuizDto, quizEntity);
         QuizEntity updatedEntity = quizRepository.save(quizEntity);
         log.info("Updated quiz with ID: {}", quizId);
         return quizMapper.toDTO(updatedEntity);

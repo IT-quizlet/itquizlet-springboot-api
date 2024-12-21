@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface AnswerService {
 
     QuestionAnswerDto addAnswerToQuestion(UUID questionId, QuestionAnswerCreateDto answer);
+
+    QuestionAnswerDto getAnswerById(UUID id);
     List<QuestionAnswerDto> getAnswersByQuestion(UUID questionId);
     QuestionAnswerDto updateAnswer(UUID answerId, QuestionAnswerUpdateDto updatedAnswer);
     void deleteAnswer(UUID answerId);

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/question")
 @RequiredArgsConstructor
 public class QuestionController {
 

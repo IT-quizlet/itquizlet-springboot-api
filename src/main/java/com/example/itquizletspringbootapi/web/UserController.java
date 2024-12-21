@@ -21,7 +21,7 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> createQuiz(@RequestBody UserRegisterDto userRegisterDTO) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserRegisterDto userRegisterDTO) {
         UserDto registeredUser = userService.registerUser(userRegisterDTO);
         return ResponseEntity.ok(registeredUser);
     }
@@ -42,5 +42,11 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @RequestBody UserUpdateDto userUpdateDTO) {
         UserDto userDto = userService.updateUser(id, userUpdateDTO);
         return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuizById(@PathVariable UUID id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

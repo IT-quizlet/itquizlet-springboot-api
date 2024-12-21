@@ -23,7 +23,7 @@ public class QuizController {
 
     private final QuizService quizService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<QuizDto> createQuiz(@RequestBody QuizCreateDto quizCreateDTO) {
         QuizDto createdQuiz = quizService.createQuiz(quizCreateDTO);
         return ResponseEntity.ok(createdQuiz);
@@ -31,7 +31,7 @@ public class QuizController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDto> getQuizByID(@PathVariable UUID id) {
+    public ResponseEntity<QuizDto> getQuizById(@PathVariable UUID id) {
         QuizDto quiz = quizService.getQuizById(id);
         return ResponseEntity.ok(quiz);
     }
@@ -41,7 +41,7 @@ public class QuizController {
         return ResponseEntity.ok(quizzes);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<QuizDto>> getAllQuizzes() {
         List<QuizDto> allQuizzes = quizService.getAllQuizzes();
         return ResponseEntity.ok(allQuizzes);

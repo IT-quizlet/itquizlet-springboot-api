@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
 
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<UserDto> registerUser(@RequestBody UserRegisterDto userRegisterDTO) {
         UserDto registeredUser = userService.registerUser(userRegisterDTO);
         return ResponseEntity.ok(registeredUser);
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuizById(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

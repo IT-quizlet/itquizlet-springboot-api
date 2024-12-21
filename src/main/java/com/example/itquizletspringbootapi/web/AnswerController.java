@@ -14,13 +14,13 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/answer")
+@RequestMapping("/api/v1/answers")
 @RequiredArgsConstructor
 public class AnswerController {
 
     private final AnswerService answerService;
 
-    @PostMapping("/add-answer-to-question/{questionId}")
+    @PostMapping("{questionId}")
     public ResponseEntity<QuestionAnswerDto> addAnswerToQuestion(@PathVariable UUID questionId, @RequestBody QuestionAnswerCreateDto questionAnswerCreateDto) {
         QuestionAnswerDto questionAnswerDto = answerService.addAnswerToQuestion(questionId, questionAnswerCreateDto);
         return ResponseEntity.ok(questionAnswerDto);
@@ -32,7 +32,7 @@ public class AnswerController {
         return ResponseEntity.ok(questionAnswerDto);
     }
 
-    @GetMapping("/by-question/{questionId}")
+    @GetMapping("/question/{questionId}")
     public ResponseEntity<List<QuestionAnswerDto>> getAnswersByQuestion(@PathVariable UUID questionId) {
         List<QuestionAnswerDto> answers = answerService.getAnswersByQuestion(questionId);
         return ResponseEntity.ok(answers);

@@ -14,13 +14,13 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/question")
+@RequestMapping("/api/v1/questions")
 @RequiredArgsConstructor
 public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/add-question-to-quiz/{quizId}")
+    @PostMapping("/quiz/{quizId}")
     public ResponseEntity<QuestionDto> addQuestionToQuiz(@PathVariable UUID quizId, @RequestBody QuestionCreateDto questionCreateDTO) {
         QuestionDto addedQuestion = questionService.addQuestionToQuiz(quizId, questionCreateDTO);
         return ResponseEntity.ok(addedQuestion);
@@ -32,7 +32,7 @@ public class QuestionController {
         return ResponseEntity.ok(question);
     }
 
-    @GetMapping("/get-questions-by-quiz/{quizId}")
+    @GetMapping("/quiz/{quizId}")
     public ResponseEntity<List<QuestionDto>> getQuestionsByQuiz(@PathVariable UUID quizId) {
         List<QuestionDto> questions = questionService.getQuestionsByQuiz(quizId);
         return ResponseEntity.ok(questions);

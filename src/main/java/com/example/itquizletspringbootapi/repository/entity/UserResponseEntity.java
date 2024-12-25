@@ -30,6 +30,9 @@ public class UserResponseEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    //@OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
+   // private List<QuestionAnswerEntity> answers;
+
     @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionAnswerEntity> answers;
 

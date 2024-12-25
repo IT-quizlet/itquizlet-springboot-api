@@ -29,4 +29,7 @@ public class QuestionEntity {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionAnswerEntity> answers;
 
+    public Object getCorrectAnswer() {
+        return answers.stream();
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.itquizletspringbootapi.service;
 
-import com.example.itquizletspringbootapi.dto.Collection.CollectionDTO;
+import com.example.itquizletspringbootapi.dto.collection.CollectionDTO;
 
 import java.util.List;
 

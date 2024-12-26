@@ -1,6 +1,6 @@
 package com.example.itquizletspringbootapi.web;
 
-import com.example.itquizletspringbootapi.dto.Topic.TopicDTO;
+import com.example.itquizletspringbootapi.dto.topic.TopicDTO;
 import com.example.itquizletspringbootapi.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

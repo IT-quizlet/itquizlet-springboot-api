@@ -1,6 +1,6 @@
 package com.example.itquizletspringbootapi.service.impl;
 
-import com.example.itquizletspringbootapi.dto.Collection.CollectionDTO;
+import com.example.itquizletspringbootapi.dto.collection.CollectionDTO;
 import com.example.itquizletspringbootapi.repository.CollectionRepository;
 import com.example.itquizletspringbootapi.repository.entity.CollectionEntity;
 import com.example.itquizletspringbootapi.service.CollectionService;

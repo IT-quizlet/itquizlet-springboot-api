@@ -1,6 +1,6 @@
 package com.example.itquizletspringbootapi.web;
 
-import com.example.itquizletspringbootapi.dto.Collection.CollectionDTO;
+import com.example.itquizletspringbootapi.dto.collection.CollectionDTO;
 import com.example.itquizletspringbootapi.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/collections")
+@RequestMapping("/collections")
 public class CollectionController {
     private final CollectionService collectionService;
 

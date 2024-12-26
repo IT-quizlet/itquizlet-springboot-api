@@ -1,6 +1,6 @@
 package com.example.itquizletspringbootapi.service.mapper;
 
-import com.example.itquizletspringbootapi.dto.Topic.TopicDTO;
+import com.example.itquizletspringbootapi.dto.topic.TopicDTO;
 import com.example.itquizletspringbootapi.repository.entity.TopicEntity;
 import org.mapstruct.Mapper;
 

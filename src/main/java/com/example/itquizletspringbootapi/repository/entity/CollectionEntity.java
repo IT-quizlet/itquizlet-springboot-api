@@ -1,43 +1,24 @@
 package com.example.itquizletspringbootapi.repository.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "collections")
 public class CollectionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<TopicEntity> getTopics() {
-        return topics;
-    }
-
-    public void setTopics(List<TopicEntity> topics) {
-        this.topics = topics;
-    }
+    @Column(nullable = true)
+    private String description;
 
     @ManyToMany
     @JoinTable(

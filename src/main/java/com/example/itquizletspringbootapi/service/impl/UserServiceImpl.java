@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -39,7 +38,6 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity userEntity = userMapper.toEntity(userRegisterDto);
-        userEntity.setCreatedAt(LocalDateTime.now());
 
         UserEntity savedUser = userRepository.save(userEntity);
 

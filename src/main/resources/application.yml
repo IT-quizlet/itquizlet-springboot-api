@@ -20,5 +20,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: false
+    show-sql: true
     open-in-view: false

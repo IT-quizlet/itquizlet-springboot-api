@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/quizzes")
+@RequestMapping("/quizzes")
 @RequiredArgsConstructor
 
 public class QuizController {

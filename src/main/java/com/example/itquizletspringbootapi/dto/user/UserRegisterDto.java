@@ -27,5 +27,4 @@ public class UserRegisterDto {
 
     @URL(message = "Invalid format of the avatar URL.")
     String avatarUrl;
-
 }

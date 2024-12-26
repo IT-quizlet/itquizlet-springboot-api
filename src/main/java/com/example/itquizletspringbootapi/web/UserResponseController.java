@@ -13,7 +13,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/user-responses")
+@RequestMapping("/responses")
 @RequiredArgsConstructor
 public class UserResponseController {
 

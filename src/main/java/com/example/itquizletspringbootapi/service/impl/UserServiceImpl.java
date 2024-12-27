@@ -29,9 +29,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = this.getUserById(id);
 
         UserEntity user = userMapper.updateUserFromDto(updatedUserDto, userEntity);
-        userRepository.save(user);
-
-        return this.getUserById(id);
+        return userRepository.save(user);
     }
 
     @Override

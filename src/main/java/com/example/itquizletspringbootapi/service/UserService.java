@@ -1,17 +1,15 @@
 package com.example.itquizletspringbootapi.service;
 
-import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
-import com.example.itquizletspringbootapi.dto.user.UserDto;
 import com.example.itquizletspringbootapi.dto.user.UserUpdateDto;
+import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import org.apache.coyote.BadRequestException;
 
 import java.util.UUID;
 
 public interface UserService {
 
-    UserDto registerUser(UserRegisterDto user);
-    UserDto getUserByUsername(String username);
-    UserDto getUserByEmail(String email);
-    UserDto updateUser(UUID userId, UserUpdateDto updatedUser);
-    void deleteUser(UUID userId);
+    UserEntity getUserById(UUID id) throws BadRequestException;
+    UserEntity updateUser(UUID id, UserUpdateDto updatedUser) throws BadRequestException;
+    void deleteUser(UUID id) throws BadRequestException;
 
 }

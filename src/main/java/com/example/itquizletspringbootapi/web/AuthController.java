@@ -8,19 +8,16 @@ import com.example.itquizletspringbootapi.repository.entity.UserEntity;
 import com.example.itquizletspringbootapi.service.impl.AuthServiceImpl;
 import com.example.itquizletspringbootapi.service.mapper.UserMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthServiceImpl authService;
     private final UserMapper userMapper;
-
-    public AuthController(AuthServiceImpl authService, UserMapper userMapper) {
-        this.authService = authService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationDto> register (
@@ -37,7 +34,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public UserDto getCurrentUser (@CurrentUser UserEntity user) {
-        return userMapper.toDto(user);
+    public ResponseEntity<UserDto> getCurrentUser (@CurrentUser UserEntity user) {
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }

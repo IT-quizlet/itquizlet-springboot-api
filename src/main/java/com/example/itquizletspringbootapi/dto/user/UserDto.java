@@ -13,6 +13,6 @@ public class UserDto {
 
     String username;
     String avatarUrl;
-    LocalDateTime createdAt;
+    String email;
 
 }

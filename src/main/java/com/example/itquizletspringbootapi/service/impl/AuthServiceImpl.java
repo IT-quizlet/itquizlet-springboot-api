@@ -51,4 +51,8 @@ public class AuthServiceImpl {
         String token = jwtService.generateToken(user);
         return new AuthenticationDto(token);
     }
+
+    public UserEntity getUser (String username) {
+        return userRepository.findByUsername(username).orElseThrow();
+    }
 }

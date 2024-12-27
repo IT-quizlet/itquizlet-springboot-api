@@ -5,27 +5,23 @@ import com.example.itquizletspringbootapi.dto.user.UserLoginDto;
 import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
 import com.example.itquizletspringbootapi.repository.UserRepository;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import com.example.itquizletspringbootapi.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthServiceImpl {
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-    }
-
+    @Override
     public AuthenticationDto register (UserRegisterDto request) {
         UserEntity user = new UserEntity();
         user.setUsername(request.getUsername());
@@ -39,6 +35,7 @@ public class AuthServiceImpl {
         return new AuthenticationDto(token);
     }
 
+    @Override
     public AuthenticationDto login (UserLoginDto request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -52,6 +49,7 @@ public class AuthServiceImpl {
         return new AuthenticationDto(token);
     }
 
+    @Override
     public UserEntity getUser (String username) {
         return userRepository.findByUsername(username).orElseThrow();
     }

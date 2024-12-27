@@ -5,7 +5,7 @@ import com.example.itquizletspringbootapi.dto.user.UserDto;
 import com.example.itquizletspringbootapi.dto.user.UserLoginDto;
 import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
-import com.example.itquizletspringbootapi.service.impl.AuthServiceImpl;
+import com.example.itquizletspringbootapi.service.AuthService;
 import com.example.itquizletspringbootapi.service.mapper.UserMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthServiceImpl authService;
+    private final AuthService authService;
     private final UserMapper userMapper;
 
     @PostMapping("/register")

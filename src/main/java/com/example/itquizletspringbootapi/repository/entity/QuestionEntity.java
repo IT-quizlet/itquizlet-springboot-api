@@ -22,6 +22,13 @@ public class QuestionEntity {
     @Column(nullable = false)
     private String text;
 
+    @Column(name = "correct_answer", nullable = false)
+    private String correctAnswer;
+
+    @Column(nullable = false)
+    @Convert(converter = StringListConverter.class)
+    private List<String> variants;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false)
     private QuizEntity quiz;

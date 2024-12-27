@@ -4,6 +4,7 @@ import com.example.itquizletspringbootapi.filter.JwtAuthenticationFilter;
 import com.example.itquizletspringbootapi.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,10 +35,10 @@ public class SecurityConfig {
                 .cors(CorsConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("/auth/register", "/auth/login")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                        req -> req
+                                .requestMatchers("/auth/register", "/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/quizzes").permitAll()
+                                .anyRequest().authenticated()
                 ).userDetailsService(userDetailsServiceImpl)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

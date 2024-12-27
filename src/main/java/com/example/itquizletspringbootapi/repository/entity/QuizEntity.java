@@ -27,6 +27,14 @@ public class QuizEntity {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    @Convert(converter = StringListConverter.class)
+    private List<String> categories;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Level level;
+
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private UserEntity owner;
@@ -34,4 +42,6 @@ public class QuizEntity {
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionEntity> questions;
 
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedQuizEntity> savedQuizzes;
 }

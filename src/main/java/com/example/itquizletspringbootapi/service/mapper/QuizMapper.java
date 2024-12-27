@@ -13,7 +13,7 @@ public interface QuizMapper {
 
     QuizEntity toEntity(QuizDto  dto);
     QuizEntity toEntity(QuizCreateDto createDto);
-    QuizDto  toDTO(QuizEntity entity);
+    QuizDto toDTO(QuizEntity entity);
     QuizEntity updateEntityFromDto(QuizUpdateDto updateDto, @MappingTarget QuizEntity existingEntity);
 
 }

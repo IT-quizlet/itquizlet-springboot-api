@@ -36,11 +36,14 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
+    @Column()
     private String avatarUrl;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuizEntity> quizList;
+    private List<QuizEntity> quizzes;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedQuizEntity> savedQuizzes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

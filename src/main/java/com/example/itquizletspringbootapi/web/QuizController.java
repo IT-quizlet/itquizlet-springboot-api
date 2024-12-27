@@ -29,12 +29,12 @@ public class QuizController {
         return ResponseEntity.ok(createdQuiz);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<QuizDto> getQuizById(@PathVariable UUID id) {
         QuizDto quiz = quizService.getQuizById(id);
         return ResponseEntity.ok(quiz);
     }
+
     @GetMapping("/owner/{ownerId}")
     public ResponseEntity<List<QuizDto>> getQuizByOwner(@PathVariable UUID ownerId) {
         List<QuizDto> quizzes = quizService.getQuizzesByOwner(ownerId);

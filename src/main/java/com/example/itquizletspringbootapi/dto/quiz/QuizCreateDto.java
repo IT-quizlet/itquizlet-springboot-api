@@ -22,9 +22,6 @@ public class QuizCreateDto {
     @NotBlank(message = "Description is mandatory.")
     String description;
 
-    @NotBlank(message = "Owner username is mandatory.")
-    String ownerUsername;
-
     @NotEmpty(message = "Questions list cannot be empty.")
     @Valid
     List<QuestionCreateDto> questions;

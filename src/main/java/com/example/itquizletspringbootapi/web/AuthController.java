@@ -7,9 +7,8 @@ import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
 import com.example.itquizletspringbootapi.service.impl.AuthServiceImpl;
 import com.example.itquizletspringbootapi.service.mapper.UserMapper;
+import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,8 +37,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public UserDto getCurrentUser (@AuthenticationPrincipal UserDetails userDetails) {
-        UserEntity user = authService.getUser(userDetails.getUsername());
+    public UserDto getCurrentUser (@CurrentUser UserEntity user) {
         return userMapper.toDto(user);
     }
 }

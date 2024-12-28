@@ -13,9 +13,10 @@ import java.util.UUID;
 @Repository
 public interface QuizRepository extends JpaRepository<QuizEntity, UUID> {
     List<QuizEntity> findByOwnerId(UUID ownerId);
-    @Query("SELECT DISTINCT q FROM QuizEntity q " +
-            "LEFT JOIN q.categories cats " +
-            "WHERE (:level IS NULL OR q.level = :level) " +
-            "AND (:categories IS NULL OR COALESCE(:categories, NULL) IS NULL OR cats IN :categories)")
-    List<QuizEntity> findByFilters(@Param("level") Level level, @Param("categories") List<String> categories);
+
+    @Query("SELECT q FROM QuizEntity q WHERE " +
+            "(:category IS NULL OR LOWER(q.categories) LIKE LOWER(CONCAT('%', :category, '%'))) " +
+            "AND (:level IS NULL OR q.level = :level)")
+    List<QuizEntity> findByCategoryAndLevel(@Param("category") String category, @Param("level") Level level);
+
 }

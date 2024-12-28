@@ -12,6 +12,7 @@ import com.example.itquizletspringbootapi.service.QuestionService;
 import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.validation.annotation.Validated;
@@ -22,8 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -38,7 +39,7 @@ public class QuizController {
 
     @PostMapping
     public ResponseEntity<QuizDto> createQuiz(
-            @RequestBody QuizCreateDto quizCreateDTO,
+            @RequestBody @Valid QuizCreateDto quizCreateDTO,
             @CurrentUser UserEntity user
             ) {
         QuizEntity createdQuiz = quizService.createQuiz(quizCreateDTO, user);
@@ -46,26 +47,17 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDto> getQuizById(@PathVariable UUID id) {
+    public ResponseEntity<QuizDto> getQuizById(@PathVariable UUID id) throws BadRequestException {
         QuizEntity quiz = quizService.getQuizById(id);
         return ResponseEntity.ok(quizMapper.toDTO(quiz));
     }
 
-    @GetMapping("/owner")
-    public ResponseEntity<List<QuizDto>> getQuizzesByOwner(@CurrentUser UserEntity user) {
-        List<QuizEntity> quizzes = quizService.getQuizzesByOwner(user.getId());
-        List<QuizDto> mappedQuizzes = quizzes.stream()
-                .map(quizMapper::toDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(mappedQuizzes);
-    }
-
     @GetMapping
     public ResponseEntity<List<QuizDto>> getAllQuizzes(
-            @RequestParam(required = false) Level level,
-            @RequestParam(required = false) List<String> categories
-            ) {
-        List<QuizDto> allQuizzes = quizService.getAllQuizzes(level, categories);
+            @RequestParam(name = "level", required = false) Level level,
+            @RequestParam(name = "category", required = false) Optional<String> category
+    ) {
+        List<QuizDto> allQuizzes = quizService.getAllQuizzes(level, category);
         return ResponseEntity.ok(allQuizzes);
     }
 

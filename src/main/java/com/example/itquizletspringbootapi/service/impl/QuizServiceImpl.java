@@ -14,6 +14,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,14 +40,14 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizEntity getQuizById(UUID quizId) {
+    public QuizEntity getQuizById(UUID quizId) throws BadRequestException {
         return quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
+                .orElseThrow(() -> new BadRequestException("Quiz not found with ID: " + quizId));
     }
 
     @Override
-    public List<QuizDto> getAllQuizzes(Level level, List<String> categories){
-        List<QuizEntity> quizzes = quizRepository.findByFilters(level, categories);
+    public List<QuizDto> getAllQuizzes(Level level, Optional<String> category){
+        List<QuizEntity> quizzes = quizRepository.findByCategoryAndLevel(category.orElse(""), level);
         return quizzes.stream()
                 .map(quizMapper::toDTO)
                 .collect(Collectors.toList());
@@ -60,23 +61,11 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizEntity updateQuiz(UUID quizId, QuizUpdateDto updatedQuizDto, UUID userId) throws BadRequestException {
         QuizEntity quizEntity = quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
+                .orElseThrow(() -> new BadRequestException("Quiz not found with ID: " + quizId));
 
         this.checkOwner(quizId, userId);
 
-        //TODO refactor in mapper
-        if (updatedQuizDto.getTitle() != null) {
-            quizEntity.setTitle(updatedQuizDto.getTitle());
-        }
-        if (updatedQuizDto.getDescription() != null) {
-            quizEntity.setDescription(updatedQuizDto.getDescription());
-        }
-        if (updatedQuizDto.getLevel() != null) {
-            quizEntity.setLevel(updatedQuizDto.getLevel());
-        }
-        if (updatedQuizDto.getCategories() != null) {
-            quizEntity.setCategories(updatedQuizDto.getCategories());
-        }
+        quizMapper.updateEntityFromDto(updatedQuizDto, quizEntity);
 
         return quizRepository.save(quizEntity);
     }

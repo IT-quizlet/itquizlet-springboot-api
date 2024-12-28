@@ -1,10 +1,9 @@
 package com.example.itquizletspringbootapi.dto.quiz;
 
-import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
-
-import jakarta.validation.Valid;
+import com.example.itquizletspringbootapi.repository.entity.Level;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -22,8 +21,10 @@ public class QuizCreateDto {
     @NotBlank(message = "Description is mandatory.")
     String description;
 
-    @NotEmpty(message = "Questions list cannot be empty.")
-    @Valid
-    List<QuestionCreateDto> questions;
+    @NotNull(message = "Level is mandatory")
+    Level level;
+
+    @NotEmpty(message = "Answers list cannot be empty.")
+    List<String> categories;
 
 }

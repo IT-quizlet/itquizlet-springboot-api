@@ -6,16 +6,12 @@ import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
-import java.util.UUID;
 
 @Value
 @Builder
 @Jacksonized
-public class QuizDto {
+public class QuizFilterDto {
 
-    UUID id;
-    String title;
-    String description;
     Level level;
     List<String> categories;
 

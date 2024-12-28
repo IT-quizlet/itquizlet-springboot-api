@@ -4,18 +4,19 @@ import com.example.itquizletspringbootapi.dto.quiz.QuizCreateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizUpdateDto;
 import com.example.itquizletspringbootapi.repository.QuizRepository;
+import com.example.itquizletspringbootapi.repository.entity.Level;
+import com.example.itquizletspringbootapi.repository.entity.UserEntity;
 import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.repository.entity.QuizEntity;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QuizServiceImpl implements QuizService {
@@ -24,55 +25,73 @@ public class QuizServiceImpl implements QuizService {
     private final QuizMapper quizMapper;
 
     @Override
-    public QuizDto createQuiz(QuizCreateDto quiz) {
-        QuizEntity quizEntity = quizMapper.toEntity(quiz);
-        QuizEntity savedQuiz = quizRepository.save(quizEntity);
-        log.info("Quiz created with ID: {}", savedQuiz.getId());
-        return quizMapper.toDTO(savedQuiz);
+    public QuizEntity createQuiz(QuizCreateDto quiz, UserEntity owner) {
+        System.out.println(quiz.getCategories());
+        QuizEntity quizEntity = QuizEntity.builder()
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .level(quiz.getLevel())
+                .categories(quiz.getCategories())
+                .owner(owner)
+                .build();
+
+        return quizRepository.save(quizEntity);
     }
 
     @Override
-    public QuizDto getQuizById(UUID quizId) {
-        QuizEntity quizEntity = quizRepository.findById(quizId)
+    public QuizEntity getQuizById(UUID quizId) {
+        return quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
-        log.info("Retrieved quiz with ID: {}", quizId);
-        return quizMapper.toDTO(quizEntity);
     }
 
     @Override
-    public List<QuizDto> getAllQuizzes(){
-        List<QuizEntity> quizzes = quizRepository.findAll();
-        log.info("Retrieved {} quizzes", quizzes.size());
+    public List<QuizDto> getAllQuizzes(Level level, List<String> categories){
+        List<QuizEntity> quizzes = quizRepository.findByFilters(level, categories);
         return quizzes.stream()
                 .map(quizMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<QuizDto> getQuizzesByOwner(UUID ownerId) {
-        List<QuizEntity> quizzes = quizRepository.findByOwnerId(ownerId);
-        log.info("Retrieved {} quizzes for owner ID: {}", quizzes.size(), ownerId);
-        return quizzes.stream()
-                .map(quizMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<QuizEntity> getQuizzesByOwner(UUID ownerId) {
+        return quizRepository.findByOwnerId(ownerId);
     }
 
     @Override
-    public QuizDto updateQuiz(UUID quizId, QuizUpdateDto updatedQuizDto) {
+    public QuizEntity updateQuiz(UUID quizId, QuizUpdateDto updatedQuizDto, UUID userId) throws BadRequestException {
         QuizEntity quizEntity = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
-        quizMapper.updateEntityFromDto(updatedQuizDto, quizEntity);
-        QuizEntity updatedEntity = quizRepository.save(quizEntity);
-        log.info("Updated quiz with ID: {}", quizId);
-        return quizMapper.toDTO(updatedEntity);
-    }
 
-    @Override
-    public void deleteQuiz(UUID quizId) {
-        if (!quizRepository.existsById(quizId)) {
-            throw new RuntimeException("Quiz not found with ID: " + quizId);
+        this.checkOwner(quizEntity, userId);
+
+        if (updatedQuizDto.getTitle() != null) {
+            quizEntity.setTitle(updatedQuizDto.getTitle());
         }
+        if (updatedQuizDto.getDescription() != null) {
+            quizEntity.setDescription(updatedQuizDto.getDescription());
+        }
+        if (updatedQuizDto.getLevel() != null) {
+            quizEntity.setLevel(updatedQuizDto.getLevel());
+        }
+        if (updatedQuizDto.getCategories() != null) {
+            quizEntity.setCategories(updatedQuizDto.getCategories());
+        }
+
+        return quizRepository.save(quizEntity);
+    }
+
+    @Override
+    public void deleteQuiz(UUID quizId, UUID userId) throws BadRequestException {
+        QuizEntity quizEntity = quizRepository.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
+        this.checkOwner(quizEntity, userId);
+
         quizRepository.deleteById(quizId);
-        log.info("Deleted quiz with ID: {}", quizId);
+    }
+
+    private void checkOwner (QuizEntity quizEntity, UUID ownerId) throws BadRequestException {
+        if (!quizEntity.getOwner().getId().equals(ownerId) ) {
+            throw new BadRequestException("You are not the owner of this quiz.");
+        }
     }
 }

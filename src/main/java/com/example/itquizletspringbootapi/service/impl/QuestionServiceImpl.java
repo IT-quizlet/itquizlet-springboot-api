@@ -2,7 +2,6 @@ package com.example.itquizletspringbootapi.service.impl;
 
 import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
 import com.example.itquizletspringbootapi.dto.question.QuestionData;
-import com.example.itquizletspringbootapi.dto.question.QuestionDto;
 import com.example.itquizletspringbootapi.dto.question.QuestionUpdateDto;
 import com.example.itquizletspringbootapi.repository.QuestionRepository;
 import com.example.itquizletspringbootapi.repository.entity.QuestionEntity;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +34,14 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    private void checkAnswer(QuestionData question) throws BadRequestException {
+    public void checkAnswer(QuestionData question) throws BadRequestException {
         if (!question.getVariants().contains(question.getCorrectAnswer())) {
             throw new BadRequestException("Correct answer must be one of the variants.");
         }
     }
 
     @Override
-    public QuestionDto addQuestionToQuiz(UUID quizId, QuestionCreateDto question) throws BadRequestException {
+    public QuestionEntity addQuestionToQuiz(UUID quizId, QuestionCreateDto question) throws BadRequestException {
         checkAnswer(question);
 
         QuizEntity quizEntity = quizRepository.findById(quizId)
@@ -51,36 +49,28 @@ public class QuestionServiceImpl implements QuestionService {
 
         QuestionEntity questionEntity = questionMapper.toEntity(question);
         questionEntity.setQuiz(quizEntity);
-        questionRepository.save(questionEntity);
-
-        return questionMapper.toDTO(questionEntity);
+        return questionRepository.save(questionEntity);
     }
 
     @Override
-    public QuestionDto getQuestionById(UUID questionId) {
-        QuestionEntity questionEntity = questionRepository.findById(questionId).get();
-
-        return questionMapper.toDTO(questionEntity);
+    public QuestionEntity getQuestionById(UUID questionId) throws BadRequestException {
+        return questionRepository.findById(questionId)
+                        .orElseThrow(() -> new BadRequestException("Questions not found with ID: " + questionId));
     }
 
     @Override
-    public List<QuestionDto> getQuestionsByQuiz(UUID quizId) {
-        List<QuestionEntity> questions = questionRepository.findByQuizId(quizId);
-
-        return questions.stream()
-                .map(questionMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<QuestionEntity> getQuestionsByQuiz(UUID quizId) {
+        return questionRepository.findByQuizId(quizId);
     }
 
     @Override
     @Transactional
-    public QuestionDto updateQuestion(UUID questionId, QuestionUpdateDto updatedQuestionDto) throws BadRequestException {
-        QuestionEntity questionEntity = questionRepository.findById(questionId).get();
+    public QuestionEntity updateQuestion(UUID questionId, QuestionUpdateDto updatedQuestionDto) throws BadRequestException {
+        QuestionEntity questionEntity = getQuestionById(questionId);
         questionMapper.updateEntityFromDto(updatedQuestionDto, questionEntity);
 
         checkAnswer(questionEntity);
-        questionRepository.save(questionEntity);
-        return questionMapper.toDTO(questionEntity);
+        return questionRepository.save(questionEntity);
     }
 
     @Override

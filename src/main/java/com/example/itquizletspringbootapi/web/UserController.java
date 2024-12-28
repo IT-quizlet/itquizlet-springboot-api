@@ -3,12 +3,16 @@ package com.example.itquizletspringbootapi.web;
 import com.example.itquizletspringbootapi.dto.quiz.QuizDto;
 import com.example.itquizletspringbootapi.dto.user.UserDto;
 import com.example.itquizletspringbootapi.dto.user.UserUpdateDto;
+import com.example.itquizletspringbootapi.dto.userresponse.UserResponseDto;
 import com.example.itquizletspringbootapi.repository.entity.QuizEntity;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import com.example.itquizletspringbootapi.repository.entity.UserResponseEntity;
 import com.example.itquizletspringbootapi.service.QuizService;
+import com.example.itquizletspringbootapi.service.UserResponseService;
 import com.example.itquizletspringbootapi.service.UserService;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.service.mapper.UserMapper;
+import com.example.itquizletspringbootapi.service.mapper.UserResponseMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -30,6 +34,8 @@ public class UserController {
     private final QuizService quizService;
     private final UserMapper userMapper;
     private final QuizMapper quizMapper;
+    private final UserResponseService userResponseService;
+    private final UserResponseMapper userResponseMapper;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID id) throws BadRequestException {
@@ -61,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok(mappedQuizzes);
     }
 
-    @PostMapping("/savedQuizees/toggle/{quizId}")
+    @PostMapping("/savedQuizzes/toggle/{quizId}")
     public ResponseEntity<Void> toggleSavedQuiz(
             @PathVariable UUID quizId,
             @CurrentUser UserEntity user
@@ -70,9 +76,19 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/savedQuizees")
+    @GetMapping("/savedQuizzes")
     public ResponseEntity<List<QuizDto>> getSavedQuizzes(@CurrentUser UserEntity user) {
         List<QuizDto> mappedQuizzes = userService.getSavedQuizzesList(user);
         return ResponseEntity.ok(mappedQuizzes);
+    }
+
+    @GetMapping("/responses")
+    public ResponseEntity<List<UserResponseDto>> getUserResponses(@CurrentUser UserEntity user) {
+        List<UserResponseEntity> responses = userResponseService.getResponsesByUser(user);
+        return ResponseEntity.ok(
+                responses.stream()
+                        .map(userResponseMapper::toDto)
+                        .collect(Collectors.toList())
+        );
     }
 }

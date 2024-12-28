@@ -6,10 +6,12 @@ import com.example.itquizletspringbootapi.dto.question.QuestionUpdateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizCreateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizUpdateDto;
 import com.example.itquizletspringbootapi.repository.entity.Level;
+import com.example.itquizletspringbootapi.repository.entity.QuestionEntity;
 import com.example.itquizletspringbootapi.repository.entity.QuizEntity;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
 import com.example.itquizletspringbootapi.service.QuestionService;
 import com.example.itquizletspringbootapi.service.QuizService;
+import com.example.itquizletspringbootapi.service.mapper.QuestionMapper;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import jakarta.validation.Valid;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -36,6 +39,7 @@ public class QuizController {
     private final QuizService quizService;
     private final QuestionService questionService;
     private final QuizMapper quizMapper;
+    private final QuestionMapper questionMapper;
 
     @PostMapping
     public ResponseEntity<QuizDto> createQuiz(
@@ -80,14 +84,18 @@ public class QuizController {
             @CurrentUser UserEntity user
     ) throws BadRequestException {
         quizService.checkOwner(id, user.getId());
-        QuestionDto addedQuestion = questionService.addQuestionToQuiz(id, questionCreateDTO);
-        return ResponseEntity.ok(addedQuestion);
+        QuestionEntity addedQuestion = questionService.addQuestionToQuiz(id, questionCreateDTO);
+        return ResponseEntity.ok(questionMapper.toDTO(addedQuestion));
     }
 
     @GetMapping("{id}/questions")
     public ResponseEntity<List<QuestionDto>> getQuestionsByQuiz(@PathVariable UUID id) {
-        List<QuestionDto> questions = questionService.getQuestionsByQuiz(id);
-        return ResponseEntity.ok(questions);
+        List<QuestionEntity> questions = questionService.getQuestionsByQuiz(id);
+        return ResponseEntity.ok(
+                questions.stream()
+                .map(questionMapper::toDTO)
+                .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/{id}/questions/{questionId}")
@@ -96,8 +104,8 @@ public class QuizController {
             @PathVariable UUID questionId
     ) throws BadRequestException {
         questionService.checkIfQuestionBelongsToQuiz(id, questionId);
-        QuestionDto question = questionService.getQuestionById(questionId);
-        return ResponseEntity.ok(question);
+        QuestionEntity question = questionService.getQuestionById(questionId);
+        return ResponseEntity.ok(questionMapper.toDTO(question));
     }
 
     @PatchMapping("/{id}/questions/{questionId}")
@@ -109,8 +117,8 @@ public class QuizController {
     ) throws BadRequestException {
         quizService.checkOwner(id, user.getId());
         questionService.checkIfQuestionBelongsToQuiz(id, questionId);
-        QuestionDto updatedQuestion = questionService.updateQuestion(questionId, questionUpdateDto);
-        return ResponseEntity.ok(updatedQuestion);
+        QuestionEntity updatedQuestion = questionService.updateQuestion(questionId, questionUpdateDto);
+        return ResponseEntity.ok(questionMapper.toDTO(updatedQuestion));
     }
 
     @DeleteMapping("/{id}/questions/{questionId}")

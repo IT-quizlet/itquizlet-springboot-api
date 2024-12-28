@@ -1,22 +1,18 @@
 package com.example.itquizletspringbootapi.dto.userresponse;
 
+import com.example.itquizletspringbootapi.dto.quiz.QuizDto;
+import com.example.itquizletspringbootapi.dto.user.UserDto;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
 @Builder
 @Jacksonized
 public class UserResponseDto {
-
     UUID id;
-    String username;
-    UUID quizId;
-    UUID questionId;
-    UUID selectedAnswerId;
-    LocalDateTime respondedAt;
-
+    UserDto user;
+    QuizDto quiz;
 }

@@ -1,61 +1,82 @@
 package com.example.itquizletspringbootapi.service.impl;
 
-import com.example.itquizletspringbootapi.dto.userresponse.UserResponseCreateDto;
-import com.example.itquizletspringbootapi.dto.userresponse.UserResponseDto;
+import com.example.itquizletspringbootapi.repository.AnswerRepository;
 import com.example.itquizletspringbootapi.repository.UserResponseRepository;
-import com.example.itquizletspringbootapi.repository.entity.UserResponseEntity;
+import com.example.itquizletspringbootapi.repository.entity.*;
+import com.example.itquizletspringbootapi.service.QuestionService;
+import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.UserResponseService;
-import com.example.itquizletspringbootapi.service.mapper.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserResponseServiceImpl implements UserResponseService {
 
     private final UserResponseRepository userResponseRepository;
-    private final UserResponseMapper userResponseMapper;
+    private final QuizService quizService;
+    private final QuestionService questionService;
+    private final AnswerRepository answerRepository;
 
     @Override
-    @Transactional
-    public UserResponseDto saveUserResponse(UserResponseCreateDto userResponseCreateDto) {
-        log.info("Saving user response: {}", userResponseCreateDto);
+    public UserResponseEntity createUserResponse(UserEntity user, UUID quizId) throws BadRequestException {
+        QuizEntity quiz = quizService.getQuizById(quizId);
 
-        UserResponseEntity userResponseEntity = userResponseMapper.toEntity(userResponseCreateDto);
-        UserResponseEntity savedUserResponseEntity = userResponseRepository.save(userResponseEntity);
+        UserResponseEntity response = new UserResponseEntity();
+        response.setUser(user);
+        response.setQuiz(quiz);
 
-        log.info("User response saved with ID: {}", savedUserResponseEntity.getId());
-        return userResponseMapper.toDto(savedUserResponseEntity);
+        return userResponseRepository.save(response);
     }
 
     @Override
-    public List<UserResponseDto> getResponsesByUsername(String username) {
-        List<UserResponseEntity> userResponses = userResponseRepository.findUserResponsesByUser_Username(username);
-        log.info("Retrieved {} user responses from user: {}", userResponses.size(), username);
-        return userResponses.stream()
-                .map(userResponseMapper::toDto)
-                .collect(Collectors.toList());
+    public List<UserResponseEntity> getResponsesByUser(UserEntity user) {
+        return userResponseRepository.findByUser(user);
     }
 
     @Override
-    public List<UserResponseDto> getResponsesByQuiz(UUID quizId) {
-        List<UserResponseEntity> userResponses = userResponseRepository.findByQuizId(quizId);
-        log.info("Retrieved {} user responses from quiz with ID: {}", userResponses.size(), quizId);
-        return userResponses.stream()
-                .map(userResponseMapper::toDto)
-                .collect(Collectors.toList());
+    public List<UserResponseEntity> getResponsesByQuiz(UUID quizId) {
+        return userResponseRepository.findByQuizId(quizId);
+    }
+
+    public UserResponseEntity getResponse (UUID responseId) throws BadRequestException {
+        return userResponseRepository.findById(responseId)
+                .orElseThrow(() -> new BadRequestException("Response not found with ID: " + responseId));
     }
 
     @Override
-    public Boolean checkIfAnswerIsCorrect(UUID answerId) {
-        log.info("Checking if answer with ID {} is correct", answerId);
-        return true;
+    public QuestionAnswerEntity addAnswer(UUID responseId, UUID questionId, String answer) throws BadRequestException {
+        UserResponseEntity response = getResponse(responseId);
+        QuestionEntity question = questionService.getQuestionById(questionId);
+
+        questionService.checkIfQuestionBelongsToQuiz(response.getQuiz().getId(), questionId);
+        checkAnswer(question, answer);
+        Boolean isCorrect = question.getCorrectAnswer().equals(answer);
+
+        QuestionAnswerEntity existingAnswer = answerRepository.findByResponseAndQuestion(response, question);
+
+        if (existingAnswer != null) {
+            existingAnswer.setAnswer(answer);
+            existingAnswer.setIsCorrect(isCorrect);
+            return answerRepository.save(existingAnswer);
+        }
+
+        QuestionAnswerEntity questionAnswer = new QuestionAnswerEntity();
+        questionAnswer.setAnswer(answer);
+        questionAnswer.setResponse(response);
+        questionAnswer.setQuestion(question);
+        questionAnswer.setIsCorrect(isCorrect);
+
+        return answerRepository.save(questionAnswer);
+    }
+
+    private void checkAnswer (QuestionEntity question, String answer) throws BadRequestException {
+        if (!question.getVariants().contains(answer)) {
+            throw new BadRequestException("Answer must be one of the variants.");
+        }
     }
 }

@@ -19,7 +19,7 @@ public class QuestionAnswerEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String answerText;
+    private String answer;
 
     @Column(nullable = false)
     private Boolean isCorrect;

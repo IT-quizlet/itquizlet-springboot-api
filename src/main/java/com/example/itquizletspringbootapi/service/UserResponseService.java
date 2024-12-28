@@ -1,16 +1,18 @@
 package com.example.itquizletspringbootapi.service;
 
-import com.example.itquizletspringbootapi.dto.userresponse.UserResponseCreateDto;
-import com.example.itquizletspringbootapi.dto.userresponse.UserResponseDto;
+import com.example.itquizletspringbootapi.repository.entity.QuestionAnswerEntity;
+import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import com.example.itquizletspringbootapi.repository.entity.UserResponseEntity;
+import org.apache.coyote.BadRequestException;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserResponseService {
 
-    UserResponseDto saveUserResponse(UserResponseCreateDto userResponse);
-    List<UserResponseDto> getResponsesByUsername(String username);
-    List<UserResponseDto> getResponsesByQuiz(UUID quizId);
-    Boolean checkIfAnswerIsCorrect(UUID answerId);
+    UserResponseEntity createUserResponse(UserEntity user, UUID quizId) throws BadRequestException;
+    List<UserResponseEntity> getResponsesByUser(UserEntity user);
+    List<UserResponseEntity> getResponsesByQuiz(UUID quizId);
+    QuestionAnswerEntity addAnswer(UUID responseId, UUID questionId, String answer) throws BadRequestException;
 
 }

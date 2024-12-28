@@ -10,9 +10,7 @@ import java.util.UUID;
 @Builder
 @Jacksonized
 public class QuestionAnswerDto {
-
     UUID id;
-    String answerText;
+    String answer;
     Boolean isCorrect;
-
 }

@@ -11,7 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class UserLoginDto {
 
-    @NotBlank(message = "Email is mandatory.")
+    @NotBlank(message = "Username is mandatory.")
     String username;
 
     @NotBlank(message = "Password is mandatory.")

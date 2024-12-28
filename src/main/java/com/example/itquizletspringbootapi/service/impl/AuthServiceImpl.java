@@ -5,6 +5,7 @@ import com.example.itquizletspringbootapi.dto.user.UserLoginDto;
 import com.example.itquizletspringbootapi.dto.user.UserRegisterDto;
 import com.example.itquizletspringbootapi.repository.UserRepository;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import com.example.itquizletspringbootapi.service.mapper.UserMapper;
 import com.example.itquizletspringbootapi.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +21,20 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
     @Override
     public AuthenticationDto register (UserRegisterDto request) {
+        /*
         UserEntity user = new UserEntity();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
 
+         */
+
+        UserEntity user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userRepository.save(user);
 
         String token = jwtService.generateToken(user);
@@ -45,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         UserEntity user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        System.out.println(user.getUsername());
         String token = jwtService.generateToken(user);
         return new AuthenticationDto(token);
     }

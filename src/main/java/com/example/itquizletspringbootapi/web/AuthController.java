@@ -11,6 +11,7 @@ import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,14 +22,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationDto> register (
-            @RequestBody UserRegisterDto request
+            @Valid @RequestBody UserRegisterDto request
     ) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationDto> login (
-        @RequestBody UserLoginDto request
+            @Valid @RequestBody UserLoginDto request
     ) {
         return ResponseEntity.ok(authService.login(request));
     }

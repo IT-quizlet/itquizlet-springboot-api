@@ -80,7 +80,7 @@ public class QuizController {
     @PostMapping("/{id}/questions")
     public ResponseEntity<QuestionDto> addQuestionToQuiz(
             @PathVariable UUID id,
-            @RequestBody QuestionCreateDto questionCreateDTO,
+            @RequestBody @Valid QuestionCreateDto questionCreateDTO,
             @CurrentUser UserEntity user
     ) throws BadRequestException {
         quizService.checkOwner(id, user.getId());

@@ -3,11 +3,7 @@ package com.example.itquizletspringbootapi.web;
 import com.example.itquizletspringbootapi.dto.quiz.QuizDto;
 import com.example.itquizletspringbootapi.dto.user.UserDto;
 import com.example.itquizletspringbootapi.dto.user.UserUpdateDto;
-import com.example.itquizletspringbootapi.repository.QuizRepository;
-import com.example.itquizletspringbootapi.repository.SavedQuizzes;
 import com.example.itquizletspringbootapi.repository.entity.QuizEntity;
-import com.example.itquizletspringbootapi.repository.entity.SavedQuizEntity;
-import com.example.itquizletspringbootapi.repository.entity.SavedQuizId;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
 import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.UserService;
@@ -34,8 +30,6 @@ public class UserController {
     private final QuizService quizService;
     private final UserMapper userMapper;
     private final QuizMapper quizMapper;
-    private final SavedQuizzes savedQuizzesRepository;
-    private final QuizRepository quizRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID id) throws BadRequestException {
@@ -72,31 +66,13 @@ public class UserController {
             @PathVariable UUID quizId,
             @CurrentUser UserEntity user
     ) throws BadRequestException {
-        SavedQuizId savedQuizId = new SavedQuizId(user.getId(), quizId);
-
-        if (savedQuizzesRepository.existsById(savedQuizId)) {
-            savedQuizzesRepository.deleteById(savedQuizId);
-        } else {
-            QuizEntity quiz = quizRepository.findById(quizId)
-                    .orElseThrow(() -> new BadRequestException("Quiz not found"));
-
-            SavedQuizEntity savedQuiz = SavedQuizEntity.builder()
-                    .id(savedQuizId)
-                    .user(user)
-                    .quiz(quiz)
-                    .build();
-            savedQuizzesRepository.save(savedQuiz);
-        }
-
+        userService.toggleSavedQuiz(quizId, user);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/savedQuizees")
     public ResponseEntity<List<QuizDto>> getSavedQuizzes(@CurrentUser UserEntity user) {
-        List<SavedQuizEntity> savedQuizzes = savedQuizzesRepository.findAllByIdUserId(user.getId());
-        List<QuizDto> mappedQuizzes = savedQuizzes.stream()
-                .map(savedQuiz -> quizMapper.toDTO(savedQuiz.getQuiz()))
-                .collect(Collectors.toList());
+        List<QuizDto> mappedQuizzes = userService.getSavedQuizzesList(user);
         return ResponseEntity.ok(mappedQuizzes);
     }
 }

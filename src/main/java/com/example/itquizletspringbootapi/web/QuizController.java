@@ -1,10 +1,14 @@
 package com.example.itquizletspringbootapi.web;
 
+import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
+import com.example.itquizletspringbootapi.dto.question.QuestionDto;
+import com.example.itquizletspringbootapi.dto.question.QuestionUpdateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizCreateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizUpdateDto;
 import com.example.itquizletspringbootapi.repository.entity.Level;
 import com.example.itquizletspringbootapi.repository.entity.QuizEntity;
 import com.example.itquizletspringbootapi.repository.entity.UserEntity;
+import com.example.itquizletspringbootapi.service.QuestionService;
 import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 public class QuizController {
 
     private final QuizService quizService;
+    private final QuestionService questionService;
     private final QuizMapper quizMapper;
 
     @PostMapping
@@ -73,6 +78,58 @@ public class QuizController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuizById(@PathVariable UUID id, @CurrentUser UserEntity user) throws BadRequestException {
         quizService.deleteQuiz(id, user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/questions")
+    public ResponseEntity<QuestionDto> addQuestionToQuiz(
+            @PathVariable UUID id,
+            @RequestBody QuestionCreateDto questionCreateDTO,
+            @CurrentUser UserEntity user
+    ) throws BadRequestException {
+        quizService.checkOwner(id, user.getId());
+        QuestionDto addedQuestion = questionService.addQuestionToQuiz(id, questionCreateDTO);
+        return ResponseEntity.ok(addedQuestion);
+    }
+
+    @GetMapping("{id}/questions")
+    public ResponseEntity<List<QuestionDto>> getQuestionsByQuiz(@PathVariable UUID id) {
+        List<QuestionDto> questions = questionService.getQuestionsByQuiz(id);
+        return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/{id}/questions/{questionId}")
+    public ResponseEntity<QuestionDto> getQuestionById(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId
+    ) throws BadRequestException {
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        QuestionDto question = questionService.getQuestionById(questionId);
+        return ResponseEntity.ok(question);
+    }
+
+    @PatchMapping("/{id}/questions/{questionId}")
+    public ResponseEntity<QuestionDto> updateQuestion(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId,
+            @RequestBody QuestionUpdateDto questionUpdateDto,
+            @CurrentUser UserEntity user
+    ) throws BadRequestException {
+        quizService.checkOwner(id, user.getId());
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        QuestionDto updatedQuestion = questionService.updateQuestion(questionId, questionUpdateDto);
+        return ResponseEntity.ok(updatedQuestion);
+    }
+
+    @DeleteMapping("/{id}/questions/{questionId}")
+    public ResponseEntity<Void> deleteQuestion(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId,
+            @CurrentUser UserEntity user
+    ) throws BadRequestException {
+        quizService.checkOwner(id, user.getId());
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        questionService.deleteQuestion(questionId);
         return ResponseEntity.noContent().build();
     }
 }

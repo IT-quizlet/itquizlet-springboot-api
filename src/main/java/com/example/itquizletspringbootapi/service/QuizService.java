@@ -19,5 +19,6 @@ public interface QuizService {
     List<QuizEntity> getQuizzesByOwner(UUID ownerId);
     QuizEntity updateQuiz(UUID quizId, QuizUpdateDto updatedQuiz, UUID userId) throws BadRequestException;
     void deleteQuiz(UUID quizId, UUID userId) throws BadRequestException;
+    void checkOwner (UUID quizId, UUID ownerId) throws BadRequestException;
 
 }

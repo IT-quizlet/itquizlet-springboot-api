@@ -62,8 +62,9 @@ public class QuizServiceImpl implements QuizService {
         QuizEntity quizEntity = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
 
-        this.checkOwner(quizEntity, userId);
+        this.checkOwner(quizId, userId);
 
+        //TODO refactor in mapper
         if (updatedQuizDto.getTitle() != null) {
             quizEntity.setTitle(updatedQuizDto.getTitle());
         }
@@ -82,14 +83,14 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public void deleteQuiz(UUID quizId, UUID userId) throws BadRequestException {
-        QuizEntity quizEntity = quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
-        this.checkOwner(quizEntity, userId);
+        this.checkOwner(quizId, userId);
 
         quizRepository.deleteById(quizId);
     }
 
-    private void checkOwner (QuizEntity quizEntity, UUID ownerId) throws BadRequestException {
+    public void checkOwner (UUID quizId, UUID ownerId) throws BadRequestException {
+        QuizEntity quizEntity = quizRepository.findById(quizId)
+                .orElseThrow(() -> new BadRequestException("Quiz not found with ID: " + quizId));
         if (!quizEntity.getOwner().getId().equals(ownerId) ) {
             throw new BadRequestException("You are not the owner of this quiz.");
         }

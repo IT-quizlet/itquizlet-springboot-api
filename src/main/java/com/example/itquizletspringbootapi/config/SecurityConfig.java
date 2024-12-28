@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> req
                                 .requestMatchers("/auth/register", "/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/quizzes", "/quizzes/*").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/quizzes/**").permitAll()
                                 .anyRequest().authenticated()
                 ).userDetailsService(userDetailsServiceImpl)
                 .sessionManagement(session -> session

@@ -3,6 +3,7 @@ package com.example.itquizletspringbootapi.web.translator;
 import jakarta.persistence.PersistenceException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,14 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ProblemDetail handleBadRequestException(BadRequestException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setType(URI.create("urn:problem-type:bad-request"));
+        problemDetail.setTitle("Bad Request Exception");
+        return problemDetail;
+    }
+
     @ExceptionHandler(PersistenceException.class)
     ProblemDetail handlePersistenceException(PersistenceException ex) {
         log.error("Persistence exception raised");
@@ -52,3 +61,4 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     }
 
 }
+

@@ -1,6 +1,7 @@
 package com.example.itquizletspringbootapi.service.impl;
 
 import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
+import com.example.itquizletspringbootapi.dto.question.QuestionData;
 import com.example.itquizletspringbootapi.dto.question.QuestionDto;
 import com.example.itquizletspringbootapi.dto.question.QuestionUpdateDto;
 import com.example.itquizletspringbootapi.repository.QuestionRepository;
@@ -10,14 +11,14 @@ import com.example.itquizletspringbootapi.service.QuestionService;
 import com.example.itquizletspringbootapi.service.mapper.QuestionMapper;
 import com.example.itquizletspringbootapi.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
@@ -26,50 +27,65 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuizRepository quizRepository;
     private final QuestionMapper questionMapper;
 
+    public void checkIfQuestionBelongsToQuiz(UUID quizId, UUID questionId) throws BadRequestException {
+        QuestionEntity question = questionRepository.findById(questionId).
+                orElseThrow(() -> new BadRequestException("Question not found with ID: " + questionId));
+
+        if (!question.getQuiz().getId().equals(quizId)) {
+            throw new BadRequestException("The question does not belong to the specified quiz.");
+        }
+    }
+
+    private void checkAnswer(QuestionData question) throws BadRequestException {
+        if (!question.getVariants().contains(question.getCorrectAnswer())) {
+            throw new BadRequestException("Correct answer must be one of the variants.");
+        }
+    }
+
     @Override
-    public QuestionDto addQuestionToQuiz(UUID quizId, QuestionCreateDto question) {
+    public QuestionDto addQuestionToQuiz(UUID quizId, QuestionCreateDto question) throws BadRequestException {
+        checkAnswer(question);
+
         QuizEntity quizEntity = quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with ID: " + quizId));
+                .orElseThrow(() -> new BadRequestException("Quiz not found with ID: " + quizId));
+
         QuestionEntity questionEntity = questionMapper.toEntity(question);
         questionEntity.setQuiz(quizEntity);
-        QuestionEntity savedQuestion = questionRepository.save(questionEntity);
-        log.info("Quiz created with ID: {}", savedQuestion.getId());
+        questionRepository.save(questionEntity);
+
         return questionMapper.toDTO(questionEntity);
     }
 
     @Override
     public QuestionDto getQuestionById(UUID questionId) {
-        QuestionEntity questionEntity = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found with ID: " + questionId));
-        log.info("Retrieved question with ID: {}", questionId);
+        QuestionEntity questionEntity = questionRepository.findById(questionId).get();
+
         return questionMapper.toDTO(questionEntity);
     }
 
     @Override
     public List<QuestionDto> getQuestionsByQuiz(UUID quizId) {
         List<QuestionEntity> questions = questionRepository.findByQuizId(quizId);
-        log.info("Retrieved {} questions from quiz with ID: {}", questions.size(), quizId);
+
         return questions.stream()
                 .map(questionMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public QuestionDto updateQuestion(UUID questionId, QuestionUpdateDto updatedQuestionDto) {
-        QuestionEntity questionEntity = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found with ID: " + questionId));
+    @Transactional
+    public QuestionDto updateQuestion(UUID questionId, QuestionUpdateDto updatedQuestionDto) throws BadRequestException {
+        QuestionEntity questionEntity = questionRepository.findById(questionId).get();
         questionMapper.updateEntityFromDto(updatedQuestionDto, questionEntity);
-        log.info("Updated question with ID: {}", questionId);
+
+        checkAnswer(questionEntity);
+        questionRepository.save(questionEntity);
         return questionMapper.toDTO(questionEntity);
     }
 
     @Override
     public void deleteQuestion(UUID questionId) {
-        if(!questionRepository.existsById(questionId)) {
-            throw new RuntimeException("Question not found with ID: " + questionId);
-        }
         questionRepository.deleteById(questionId);
-        log.info("Deleted question with ID: {}", questionId);
     }
 
 }

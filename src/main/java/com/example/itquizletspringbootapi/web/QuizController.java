@@ -14,6 +14,8 @@ import com.example.itquizletspringbootapi.service.QuizService;
 import com.example.itquizletspringbootapi.service.mapper.QuestionMapper;
 import com.example.itquizletspringbootapi.service.mapper.QuizMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
@@ -50,12 +52,24 @@ public class QuizController {
         return ResponseEntity.ok(quizMapper.toDTO(createdQuiz));
     }
 
+    @Operation(
+            summary = "Get quiz by ID",
+            description = "Retrieve a quiz by its ID",
+            security = { }
+    )
+    @SecurityRequirements
     @GetMapping("/{id}")
     public ResponseEntity<QuizDto> getQuizById(@PathVariable UUID id) throws BadRequestException {
         QuizEntity quiz = quizService.getQuizById(id);
         return ResponseEntity.ok(quizMapper.toDTO(quiz));
     }
 
+    @Operation(
+            summary = "Get all quizzes",
+            description = "Retrieve all quizzes with optional filtering by level and category",
+            security = { }
+    )
+    @SecurityRequirements
     @GetMapping
     public ResponseEntity<List<QuizDto>> getAllQuizzes(
             @RequestParam(name = "level", required = false) Level level,

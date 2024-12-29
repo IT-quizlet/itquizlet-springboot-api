@@ -36,14 +36,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers("/auth/register", "/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/quizzes/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
                                 .requestMatchers(
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/swagger-resources/**",
-                                        "/webjars/**"
+                                        "/webjars/**",
+                                        "/auth/register",
+                                        "/auth/login"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 ).userDetailsService(userDetailsServiceImpl)

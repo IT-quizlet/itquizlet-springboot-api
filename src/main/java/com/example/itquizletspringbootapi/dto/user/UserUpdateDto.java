@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.URL;
 @Builder
 @Jacksonized
 public class UserUpdateDto {
+    String username;
+
     @URL(message = "Invalid format of the avatar URL.")
     String avatarUrl;
 }

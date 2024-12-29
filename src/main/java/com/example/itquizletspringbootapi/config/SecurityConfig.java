@@ -38,6 +38,13 @@ public class SecurityConfig {
                         req -> req
                                 .requestMatchers("/auth/register", "/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/quizzes/**").permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/webjars/**"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 ).userDetailsService(userDetailsServiceImpl)
                 .sessionManagement(session -> session

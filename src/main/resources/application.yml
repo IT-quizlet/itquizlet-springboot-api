@@ -10,12 +10,21 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_POSTGRES_URL}
-    username: ${DB_POSTGRES_USERNAME}
-    password: ${DB_POSTGRES_PASSWORD}
+    url: jdbc:postgresql://ep-shrill-bush-a2bqnx02.eu-central-1.aws.neon.tech/neondb?user=neondb_owner&password=r3atpYe2TLmD&sslmode=require
+    username: neondb_owner
+    password: r3atpYe2TLmD
 
   jpa:
     hibernate:
-      ddl-auto: create
-    show-sql: false
-    open-in-view: false
+      ddl-auto: update
+    show-sql: true
+    open-in-view: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  default-produces-media-type: application/json
+

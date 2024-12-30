@@ -20,7 +20,6 @@ public class SwaggerConfig {
                 .bearerFormat("JWT")
                 .name("Authorization");
 
-        // Add global security requirement
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList(securitySchemeName);
 
@@ -29,7 +28,6 @@ public class SwaggerConfig {
                         .title("IT Quizlet API")
                         .version("1.0.0")
                         .description("API Documentation for IT Quizlet"))
-                // Add global security requirement here
                 .addSecurityItem(securityRequirement)
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes(securitySchemeName, securityScheme));

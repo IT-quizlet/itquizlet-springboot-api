@@ -25,14 +25,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationDto register (UserRegisterDto request) {
-        /*
-        UserEntity user = new UserEntity();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
-
-         */
-
         UserEntity user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userRepository.save(user);

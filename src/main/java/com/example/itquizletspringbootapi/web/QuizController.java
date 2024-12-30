@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -49,22 +48,13 @@ public class QuizController {
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
 
-    @Operation(
-            summary = "Create a new quiz",
-            description = "Allows an authenticated user to create a new quiz",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Quiz successfully created",
-                    content = @Content(schema = @Schema(implementation = QuizDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request data")
-    })
+
     @PostMapping
     public ResponseEntity<QuizDto> createQuiz(
-            @RequestBody(description = "Details of the quiz to be created", required = true)
-            @Valid QuizCreateDto quizCreateDTO,
+            @RequestBody QuizCreateDto quizCreateDTO,
             @CurrentUser UserEntity user
     ) {
+        System.out.println(quizCreateDTO);
         QuizEntity createdQuiz = quizService.createQuiz(quizCreateDTO, user);
         return ResponseEntity.ok(quizMapper.toDTO(createdQuiz));
     }
@@ -148,8 +138,7 @@ public class QuizController {
     @PostMapping("/{id}/questions")
     public ResponseEntity<QuestionDto> addQuestionToQuiz(
             @PathVariable UUID id,
-            @RequestBody(description = "Details of the question to be added", required = true)
-            @Valid QuestionCreateDto questionCreateDTO,
+            @RequestBody @Valid QuestionCreateDto questionCreateDTO,
             @CurrentUser UserEntity user
     ) throws BadRequestException {
         quizService.checkOwner(id, user.getId());

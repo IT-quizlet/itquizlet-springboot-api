@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +72,7 @@ public class UserResponseController {
     public ResponseEntity<QuestionAnswerDto> addAnswer(
             @PathVariable UUID responseId,
             @RequestParam UUID questionId,
-            @RequestBody QuestionAnswerCreateDto answerCreateDto
+            @RequestBody @Valid QuestionAnswerCreateDto answerCreateDto
     ) throws BadRequestException {
         QuestionAnswerEntity answer = userResponseService.addAnswer(responseId, questionId, answerCreateDto.getAnswer());
         return ResponseEntity.ok(questionAnswerMapper.toDto(answer));

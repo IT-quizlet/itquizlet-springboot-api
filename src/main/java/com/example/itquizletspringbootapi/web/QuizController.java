@@ -2,6 +2,7 @@ package com.example.itquizletspringbootapi.web;
 
 import com.example.itquizletspringbootapi.dto.question.QuestionCreateDto;
 import com.example.itquizletspringbootapi.dto.question.QuestionDto;
+import com.example.itquizletspringbootapi.dto.question.QuestionUpdateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizCreateDto;
 import com.example.itquizletspringbootapi.dto.quiz.QuizUpdateDto;
 import com.example.itquizletspringbootapi.dto.userresponse.UserResponseDto;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -153,5 +155,91 @@ public class QuizController {
         quizService.checkOwner(id, user.getId());
         QuestionEntity addedQuestion = questionService.addQuestionToQuiz(id, questionCreateDTO);
         return ResponseEntity.ok(questionMapper.toDTO(addedQuestion));
+    }
+
+    @GetMapping("{id}/questions")
+    @Operation(
+            summary = "Get all questions by quiz ID",
+            description = "Retrieve all questions associated with a specific quiz by its ID",
+            security = @SecurityRequirement(name = "Bearer Token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of questions retrieved successfully",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = QuestionDto.class)))),
+            @ApiResponse(responseCode = "404", description = "Quiz not found")
+    })
+    public ResponseEntity<List<QuestionDto>> getQuestionsByQuiz(@PathVariable UUID id) {
+        List<QuestionEntity> questions = questionService.getQuestionsByQuiz(id);
+        return ResponseEntity.ok(
+                questions.stream()
+                        .map(questionMapper::toDTO)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping("/{id}/questions/{questionId}")
+    @Operation(
+            summary = "Get question by ID",
+            description = "Retrieve details of a specific question by its ID within a quiz",
+            security = @SecurityRequirement(name = "Bearer Token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Question details retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = QuestionDto.class))),
+            @ApiResponse(responseCode = "404", description = "Quiz or question not found")
+    })
+    public ResponseEntity<QuestionDto> getQuestionById(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId
+    ) throws BadRequestException {
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        QuestionEntity question = questionService.getQuestionById(questionId);
+        return ResponseEntity.ok(questionMapper.toDTO(question));
+    }
+
+    @PatchMapping("/{id}/questions/{questionId}")
+    @Operation(
+            summary = "Update question",
+            description = "Update the details of a specific question within a quiz",
+            security = @SecurityRequirement(name = "Bearer Token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Question updated successfully",
+                    content = @Content(schema = @Schema(implementation = QuestionDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden: User does not own the quiz"),
+            @ApiResponse(responseCode = "404", description = "Quiz or question not found")
+    })
+    public ResponseEntity<QuestionDto> updateQuestion(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId,
+            @RequestBody QuestionUpdateDto questionUpdateDto,
+            @CurrentUser UserEntity user
+    ) throws BadRequestException {
+        quizService.checkOwner(id, user.getId());
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        QuestionEntity updatedQuestion = questionService.updateQuestion(questionId, questionUpdateDto);
+        return ResponseEntity.ok(questionMapper.toDTO(updatedQuestion));
+    }
+
+    @DeleteMapping("/{id}/questions/{questionId}")
+    @Operation(
+            summary = "Delete question",
+            description = "Delete a specific question within a quiz",
+            security = @SecurityRequirement(name = "Bearer Token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Question deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden: User does not own the quiz"),
+            @ApiResponse(responseCode = "404", description = "Quiz or question not found")
+    })
+    public ResponseEntity<Void> deleteQuestion(
+            @PathVariable UUID id,
+            @PathVariable UUID questionId,
+            @CurrentUser UserEntity user
+    ) throws BadRequestException {
+        quizService.checkOwner(id, user.getId());
+        questionService.checkIfQuestionBelongsToQuiz(id, questionId);
+        questionService.deleteQuestion(questionId);
+        return ResponseEntity.noContent().build();
     }
 }

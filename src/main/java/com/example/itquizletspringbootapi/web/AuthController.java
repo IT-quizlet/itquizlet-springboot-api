@@ -9,6 +9,7 @@ import com.example.itquizletspringbootapi.service.AuthService;
 import com.example.itquizletspringbootapi.service.mapper.UserMapper;
 import com.example.itquizletspringbootapi.web.decorators.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,8 +28,7 @@ public class AuthController {
 
     @Operation(
             summary = "Register new user",
-            description = "Register a new user in the system",
-            security = { }
+            description = "Register a new user in the system"
     )
     @SecurityRequirements
     @ApiResponse(responseCode = "200", description = "Successfully registered")
@@ -41,8 +41,7 @@ public class AuthController {
 
     @Operation(
             summary = "Login user",
-            description = "Authenticate existing user",
-            security = { }
+            description = "Authenticate existing user"
     )
     @SecurityRequirements
     @ApiResponse(responseCode = "200", description = "Successfully authenticated")
@@ -55,7 +54,8 @@ public class AuthController {
 
     @Operation(
             summary = "Get current user",
-            description = "Get details of currently authenticated user"
+            description = "Get details of currently authenticated user",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(responseCode = "200", description = "User details retrieved successfully")
     @GetMapping("/me")

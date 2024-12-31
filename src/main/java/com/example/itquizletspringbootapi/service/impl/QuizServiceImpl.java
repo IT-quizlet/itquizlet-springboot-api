@@ -64,7 +64,6 @@ public class QuizServiceImpl implements QuizService {
                 .orElseThrow(() -> new BadRequestException("Quiz not found with ID: " + quizId));
 
         this.checkOwner(quizId, userId);
-
         quizMapper.updateEntityFromDto(updatedQuizDto, quizEntity);
 
         return quizRepository.save(quizEntity);

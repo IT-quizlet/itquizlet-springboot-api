@@ -50,6 +50,17 @@ public class QuizController {
 
 
     @PostMapping
+    @Operation(
+            summary = "Create a new quiz",
+            description = "Allows an authenticated user to create a new quiz",
+            security = @SecurityRequirement(name = "Bearer Token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Quiz successfully created",
+                    content = @Content(schema = @Schema(implementation = QuizDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: Invalid or missing JWT token")
+    })
     public ResponseEntity<QuizDto> createQuiz(
             @RequestBody QuizCreateDto quizCreateDTO,
             @CurrentUser UserEntity user
@@ -111,7 +122,7 @@ public class QuizController {
     @Operation(
             summary = "Delete a quiz by ID",
             description = "Allows the owner of a quiz to delete it",
-            security = @SecurityRequirement(name = "bearerAuth")
+            security = @SecurityRequirement(name = "Bearer Token")
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Quiz successfully deleted"),
@@ -127,7 +138,7 @@ public class QuizController {
     @Operation(
             summary = "Add a question to a quiz",
             description = "Allows the owner of a quiz to add a question to it",
-            security = @SecurityRequirement(name = "bearerAuth")
+            security = @SecurityRequirement(name = "Bearer Token")
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Question added successfully",

@@ -55,7 +55,7 @@ public class AuthController {
     @Operation(
             summary = "Get current user",
             description = "Get details of currently authenticated user",
-            security = @SecurityRequirement(name = "bearerAuth")
+            security = @SecurityRequirement(name = "Bearer Token")
     )
     @ApiResponse(responseCode = "200", description = "User details retrieved successfully")
     @GetMapping("/me")

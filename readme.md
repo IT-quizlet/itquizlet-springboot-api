@@ -29,3 +29,9 @@
 #### [Лаб 1-3 (Розробка проекту)](https://github.com/IT-quizlet/itquizlet-springboot-api/tree/main/src/main/java/com/example/itquizletspringbootapi)
 #### [Лаб 4-5 (Під'єднання БД)](https://github.com/IT-quizlet/itquizlet-springboot-api/blob/main/src/main/resources/application.yml)
 #### [Лаб 6 (Покрито UNIT-тестами UserService)](https://github.com/IT-quizlet/itquizlet-springboot-api/blob/main/src/test/java/com/example/itquizletspringbootapi/UserServiceTest.java)
+
+# Діаграма компонентів 
+![component diagram.png](component diagram.png)
+
+# ER-діаграма
+![er.png](er.png)

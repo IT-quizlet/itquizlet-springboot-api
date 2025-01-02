@@ -31,7 +31,7 @@
 #### [Лаб 6 (Покрито UNIT-тестами UserService)](https://github.com/IT-quizlet/itquizlet-springboot-api/blob/main/src/test/java/com/example/itquizletspringbootapi/UserServiceTest.java)
 
 # Діаграма компонентів 
-![component diagram.png](component diagram.png)
+![component_diagram.png](component_diagram.png)
 
 # ER-діаграма
 ![er.png](er.png)

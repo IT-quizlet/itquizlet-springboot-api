@@ -33,4 +33,4 @@ jobs:
         run: ./gradlew build --no-daemon
 
       - name: Run tests
-        run: ./gradlew test --no-daemon --tests "com.example.itquizletspringbootapi.UserServiceTest"
+        run: ./gradlew test --no-daemon

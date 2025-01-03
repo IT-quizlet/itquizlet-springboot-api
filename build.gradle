@@ -50,4 +50,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 	include '**/UserServiceTest.class'
+	testLogging {
+		events 'passed', 'failed', 'skipped'  // Логувати успішні, неуспішні та пропущені тести
+		exceptionFormat 'full'  // Виводити повні стек-трейси для помилок
+	}
 }
